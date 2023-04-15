@@ -34,8 +34,9 @@ const getAllUsersHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit
   try {
     const users = await prisma.user.findMany();
     return users;
-  } catch (err) {
-    return h.response(err).code(500);
+  } catch (error) {
+    console.error("Error getting all users:", error);
+    return h.response({ error: "Failed to get all users" }).code(500);
   }
 };
 
@@ -47,8 +48,9 @@ const createUserHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit)
       data: { nickname, username },
     });
     return newUser;
-  } catch (err) {
-    return h.response(err).code(500);
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return h.response({ error: "Failed to create user" }).code(500);
   }
 };
 
@@ -60,8 +62,9 @@ const getUserByIdHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit
       where: { id: parseInt(userId) },
     });
     return user;
-  } catch (err) {
-    return h.response(err).code(500);
+  } catch (error) {
+    console.error("Error getting user by id:", error);
+    return h.response({ error: "Failed to get user by id" }).code(500);
   }
 };
 

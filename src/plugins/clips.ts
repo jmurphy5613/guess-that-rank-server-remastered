@@ -52,8 +52,9 @@ const getClipByIdHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit
             where: { id: parseInt(clipId) },
         });
         return clip;
-    } catch (err) {
-        return h.response(err).code(500);
+    } catch (error) {
+        console.error("Error getting clip by Id:", error);
+        return h.response({ error: "Failed to get clip by id" }).code(500);
     }
 };
 
@@ -79,8 +80,9 @@ const createClipHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit)
             },
         });
         return newClip;
-    } catch (err) {
-        return h.response(err).code(500);
+    } catch (error) {
+        console.error("Error creating clip:", error);
+        return h.response({ error: "Failed to create clip" }).code(500);
     }
 };
 
@@ -89,8 +91,9 @@ const getAllClipsHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit
     try {
         const clips = await prisma.clip.findMany();
         return clips;
-    } catch (err) {
-        return h.response(err).code(500);
+    } catch (error) {
+        console.error("Error getting all clips", error);
+        return h.response({ error: "Failed to get all clips" }).code(500);
     }
 };
 
@@ -124,9 +127,9 @@ const getClipsNotGuessedHandler = async (request: Hapi.Request, h: Hapi.Response
         });
 
         return h.response(clipsNotGuessed).code(200);
-    } catch (err) {
-        console.error('Failed to get clips not guessed:', err);
-        return h.response({ error: 'Failed to get clips not guessed' }).code(500);
+    } catch (error) {
+        console.error("Error getting clips not guessed:", error);
+        return h.response({ error: "Failed to get clips not guessed" }).code(500);
     }
 };
 

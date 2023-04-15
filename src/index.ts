@@ -11,8 +11,7 @@ const server = Hapi.server({
   host: 'localhost', // Specify the host address to bind to
 });
 
-//register plugins
-await server.register([prismaPlugin, guessesPlugin, clipsPlugin, usersPlugin]);
+
 
 // Define a route
 server.route({
@@ -27,6 +26,7 @@ server.route({
 const start = async () => {
   try {
     await server.start(); // Start the server
+    await server.register([prismaPlugin, guessesPlugin, clipsPlugin, usersPlugin]);
     console.log('Server running on %s', server.info.uri);
   } catch (err) {
     console.error('Error starting server:', err);
