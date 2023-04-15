@@ -1,6 +1,9 @@
 import Hapi from '@hapi/hapi';
 
 import prismaPlugin from './plugins/prisma';
+import guessesPlugin from './plugins/guesses';
+import clipsPlugin from './plugins/clips';
+import usersPlugin from './plugins/users';
 
 // Create a Hapi server instance
 const server = Hapi.server({
