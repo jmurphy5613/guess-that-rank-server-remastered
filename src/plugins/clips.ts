@@ -35,6 +35,13 @@ const clipsPlugin: Hapi.Plugin<null> = {
             path: '/clips/not-guessed/{userId}',
             handler: getClipsNotGuessedHandler,
         });
+
+        // Route for fetching clips that user has guessed
+        server.route({
+            method: 'GET',
+            path: '/clips/guessed/{userId}',
+            handler: getClipsGuessedHandler,
+        });
     },
 };
 
@@ -90,39 +97,67 @@ const getAllClipsHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit
 // Handler for getting clips that user has not guessed yet
 const getClipsNotGuessedHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
     try {
-      const userId = Number(request.params.userId);
-  
-      // Retrieve clips that user has guessed
-      const clipsGuessed = await prisma.guess.findMany({
-        where: {
-          userId,
-        },
-        select: {
-          clipId: true,
-        },
-      });
-  
-      // Extract clipIds from the clipsGuessed result
-      const clipIdsGuessed = clipsGuessed.map((guess) => guess.clipId);
-  
-      // Retrieve clips that user has not guessed
-      const clipsNotGuessed = await prisma.clip.findMany({
-        where: {
-          NOT: {
-            id: {
-              in: clipIdsGuessed,
+        const userId = Number(request.params.userId);
+
+        // Retrieve clips that user has guessed
+        const clipsGuessed = await prisma.guess.findMany({
+            where: {
+                userId,
             },
-          },
-        },
-      });
-  
-      return h.response(clipsNotGuessed).code(200);
+            select: {
+                clipId: true,
+            },
+        });
+
+        // Extract clipIds from the clipsGuessed result
+        const clipIdsGuessed = clipsGuessed.map((guess) => guess.clipId);
+
+        // Retrieve clips that user has not guessed
+        const clipsNotGuessed = await prisma.clip.findMany({
+            where: {
+                NOT: {
+                    id: {
+                        in: clipIdsGuessed,
+                    },
+                },
+            },
+        });
+
+        return h.response(clipsNotGuessed).code(200);
     } catch (err) {
-      console.error('Failed to get clips not guessed:', err);
-      return h.response({ error: 'Failed to get clips not guessed' }).code(500);
+        console.error('Failed to get clips not guessed:', err);
+        return h.response({ error: 'Failed to get clips not guessed' }).code(500);
     }
-  };
-  
+};
+
+export const getClipsGuessedHandler = async (
+    request: Hapi.Request,
+    h: Hapi.ResponseToolkit
+) => {
+    try {
+        const { userId } = request.params; // Get userId from URL parameter
+
+        // Fetch all clips that have been guessed by the specified userId
+        const guessedClips = await prisma.clip.findMany({
+            where: {
+                guesses: {
+                    some: {
+                        userId: parseInt(userId), // Filter based on userId
+                    },
+                },
+            },
+            include: {
+                guesses: true, // Include the guesses relationship
+            },
+        });
+
+        return guessedClips; // Return the fetched clips with related guesses
+    } catch (error) {
+        console.error("Error getting guessed clips:", error);
+        return h.response({ error: "Failed to get guessed clips" }).code(500);
+    }
+};
+
 
 
 export default clipsPlugin;
