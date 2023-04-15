@@ -11,11 +11,14 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  nickname String
-  username String
-  clips    Clip[]
-  Guess    Guess[]
+  id        Int      @id @default(autoincrement())
+  email     String?  @unique
+  username  String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  clips     Clip[]
+  guesses   Guess[]
 }
 
 model Clip {
@@ -28,6 +31,8 @@ model Clip {
   userId      Int
   userRank    Int
   guesses     Guess[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Guess {
@@ -38,4 +43,6 @@ model Guess {
   userId      Int
   clip        Clip    @relation(fields: [clipId], references: [id])
   clipId      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
