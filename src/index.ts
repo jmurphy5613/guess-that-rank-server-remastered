@@ -11,6 +11,9 @@ const server = Hapi.server({
   host: 'localhost', // Specify the host address to bind to
 });
 
+//register plugins
+await server.register([prismaPlugin, guessesPlugin, clipsPlugin, usersPlugin]);
+
 // Define a route
 server.route({
   method: 'GET', // Specify the HTTP method for the route

@@ -96,3 +96,5 @@ export const getAllGuessesOnClipHandler = async (
         return h.response({ error: "Failed to get guesses on clip" }).code(500);
     }
 };
+
+export default guessesPlugin;
