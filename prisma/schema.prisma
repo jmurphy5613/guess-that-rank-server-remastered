@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  nickname String
+  username String
+  clips    Clip[]
+  Guess    Guess[]
+}
+
+model Clip {
+  id          Int     @id @default(autoincrement())
+  videoSource String
+  game        String
+  videoURL    String
+  videoName   String
+  user        User    @relation(fields: [userId], references: [id])
+  userId      Int
+  userRank    Int
+  guesses     Guess[]
+}
+
+model Guess {
+  id          Int     @id @default(autoincrement())
+  guessedRank Int
+  isCorrect   Boolean
+  user        User    @relation(fields: [userId], references: [id])
+  userId      Int
+  clip        Clip    @relation(fields: [clipId], references: [id])
+  clipId      Int
+}
