@@ -7,8 +7,13 @@ import usersPlugin from './plugins/users';
 
 // Create a Hapi server instance
 const server = Hapi.server({
-  port: 3001, // Specify the port to listen on
+  port: 3002, // Specify the port to listen on
   host: 'localhost', // Specify the host address to bind to
+  "routes": {
+    "cors": {
+      "origin": ["*"],
+    }
+  }
 });
 
 

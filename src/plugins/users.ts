@@ -43,11 +43,21 @@ const getAllUsersHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit
 // Handler function for creating a new user
 const createUserHandler = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
   try {
-    const { nickname, username } = request.payload as User
-    const newUser = await prisma.user.create({
-      data: { nickname, username },
-    });
-    return newUser;
+    const { username, email } = request.payload as User;
+
+    // Check if user with the same username already exists
+    const existingUser = await prisma.user.findUnique({ where: { username } });
+
+    if (existingUser) {
+      return h
+        .response({ error: "Username already exists" })
+        .code(400);
+    }
+
+    // Create new user
+    const newUser = await prisma.user.create({ data: { username, email } });
+
+    return h.response(newUser).code(201);
   } catch (error) {
     console.error("Error creating user:", error);
     return h.response({ error: "Failed to create user" }).code(500);
